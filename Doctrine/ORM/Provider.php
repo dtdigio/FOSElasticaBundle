@@ -69,8 +69,13 @@ class Provider extends AbstractProvider
         $qb = clone $queryBuilder;
         $rootAliases = $queryBuilder->getRootAliases();
 
+        $manager = $this->managerRegistry->getManagerForClass($this->objectClass);
+        $identifiers = $manager
+            ->getClassMetadata($this->objectClass)
+            ->getIdentifierFieldNames();
+
         return $qb
-            ->select($qb->expr()->count($rootAliases[0]))
+            ->select($qb->expr()->count($rootAliases[0]. "." . $identifiers[0]))
             // Remove ordering for efficiency; it doesn't affect the count
             ->resetDQLPart('orderBy')
             ->getQuery()
